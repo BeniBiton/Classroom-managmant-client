@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { setClasses } from "../redux/classesSlice";
+import { ClassItem, setClasses } from "../redux/classesSlice";
 import { useQuery } from "react-query";
 import api from "../api/api";
 import { AppDispatch } from "../redux/store";
@@ -13,7 +13,7 @@ export const useFetchClasses = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const query = useQuery("classes", fetchClasses, {
-    onSuccess: (data) => {
+    onSuccess: (data: ClassItem[]) => {
       dispatch(setClasses(data)); 
     },
     refetchOnWindowFocus: false, 
