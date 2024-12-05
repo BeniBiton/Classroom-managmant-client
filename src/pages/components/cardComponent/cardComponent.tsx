@@ -18,6 +18,7 @@ import { useDeleteClass } from "../../../hooks/useClassMutation";
 import { removeStudentInClass } from "../../../redux/studentsSlice";
 import { ClassCardProps } from "../../../interfaces/student.interface";
 import StudentsListInClass from "../studentsInClassList/studentsInClassList";
+import { unassignStudent } from "../../../services/classes.service";
 
 const ClassCard: React.FC<ClassCardProps> = ({
   className,
@@ -37,26 +38,25 @@ const ClassCard: React.FC<ClassCardProps> = ({
   const iconColor = currentTheme.palette.primary.main;
 
   const classrooms: ClassItem[] = useSelector(
-    (state: RootState) => state.classrooms.classesData
+    (state: RootState) => state.classrooms.classesData || []
   );
 
   useEffect(() => {
-    const numStudentsInClass =
-      classrooms.find((classItem) => classItem.id === classId)?.students
-        .length || 0;
+    const classItem = classrooms.find((classItem) => classItem.id === classId);
+    const numStudentsInClass = classItem?.students?.length || 0;
     setSeatsLeft(totalPlaces - numStudentsInClass);
   }, [classrooms, classId, totalPlaces]);
+  
 
   const handleDeleteClass = (classId: string) => {
-    // Find the class to delete
     const classToDelete = classrooms.find(
       (classItem) => classItem.id === classId
     );
 
     if (classToDelete) {
-      // Remove all students in the class
       classToDelete.students.forEach((studentItem) => {
-        dispatch(removeStudentInClass(studentItem.id)); // Unassign student
+        unassignStudent(studentItem.id); // unassign student from db
+        dispatch(removeStudentInClass(studentItem.id)); // Unassign student from redux
       });
     }
 

@@ -40,7 +40,7 @@ const StudentsListInClass: React.FC<StudentsListInClassProps> = ({
     >
       <DialogTitle className={classes.dialogTitle}>Class Students</DialogTitle>
       <List>
-        {students.length > 0 ? (
+        {students? (
           students.map((student) => (
             <ListItem className={classes.listItem} key={student.id}>
               <ListItemAvatar>
