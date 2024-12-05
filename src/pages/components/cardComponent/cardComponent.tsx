@@ -1,99 +1,102 @@
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
-import { useState, useCallback } from "react";
-import { RootState } from "../../../redux/store";
+import { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import { useStyles } from "./cardComponent.styles";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch, useSelector } from "react-redux";
-import { useMutation, useQueryClient } from "react-query";
-import { setStudents } from "../../../redux/studentsSlice";
-import api, { handleStudentsByClass } from "../../../api/api";
-import { useThemeContext, redTheme, blueTheme } from "../../../themes/ThemeContext";
+import {
+  useThemeContext,
+  redTheme,
+  blueTheme,
+} from "../../../themes/ThemeContext";
 import { StudentCardProps } from "../../../interfaces/student.interface";
 import StudentsListInClass from "../studentsInClassList/studentsInClassList";
+import { useDeleteClass } from "../../../hooks/useClassMutation";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { ClassItem } from "../../../interfaces/class.interface";
+import { removeStudentInClass } from "../../../redux/studentsSlice";
 
 const StudentCard: React.FC<StudentCardProps> = ({
   className,
-  seatsLeft,
-  totalSeats,
   classId,
+  totalPlaces,
+  students,
 }) => {
-  const classes = useStyles()
-  const dispatch = useDispatch();
-  const queryClient = useQueryClient();
+  const classes = useStyles();
   const { isBlueTheme } = useThemeContext();
   const [openDialog, setOpenDialog] = useState(false);
+  const [seatsLeft, setSeatsLeft] = useState(totalPlaces); 
+  const dispatch = useDispatch()
 
-  const currentTheme = isBlueTheme ? blueTheme : redTheme
-  const iconColor = currentTheme.palette.primary.main
+  const { mutate: deleteClass } = useDeleteClass();
 
-  const students = useSelector((state: RootState) =>
-    state.students.studentsData.filter((student) => student.classId === classId)
+  const currentTheme = isBlueTheme ? blueTheme : redTheme;
+  const iconColor = currentTheme.palette.primary.main;
+
+  const classrooms: ClassItem[] = useSelector(
+    (state: RootState) => state.classrooms.classesData
   );
 
-  const fetchStudentsListInClass = useCallback(async () => {
-    try {
-      const fetchedStudents = await handleStudentsByClass(classId);
-      dispatch(setStudents(fetchedStudents));
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
-  }, [classId, dispatch]);
+  useEffect(() => {
+    const numStudentsInClass =
+      classrooms.find((classItem) => classItem.id === classId)?.students.length ||
+      0;
+    setSeatsLeft(totalPlaces - numStudentsInClass);
+  }, [classrooms, classId, totalPlaces]);
 
-  const handleOpenDialog = useCallback(async () => {
-    await fetchStudentsListInClass();
+  const handleDeleteClass = (classId: string) => {
+    classrooms.map((classItem) => {
+      if(classItem.id === classId) {
+        classItem.students.map((studentItem) => {
+          dispatch(removeStudentInClass(studentItem.id))
+        })
+      }
+    })
+    deleteClass(classId)
+  }
+  
+  
+
+
+  const handleOpenDialog = () => {
     setOpenDialog(true);
-  }, [fetchStudentsListInClass]);
+  };
 
-  const handleCloseDialog = useCallback(() => {
+  const handleCloseDialog = () => {
     setOpenDialog(false);
-    queryClient.invalidateQueries("classes"); 
-  }, [queryClient]);
-
-  // Delete class mutation
-  const deleteClassMutation = useMutation(
-    async (id: string) => {
-      await api.delete(`/classes/${id}`);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("classes"); 
-      },
-      onError: (error) => {
-        console.error("Error deleting class:", error);
-      },
-    }
-  );
+  };
 
   return (
     <>
-      <Card
-        className={classes.card_style}
-      >
+      <Card className={classes.card_style}>
         <CardContent>
-          <Typography
-            className={classes.title}
-            variant="h6"
-            component="div"
-          >
+          <Typography className={classes.title} variant="h6" component="div">
             {className}
           </Typography>
-          <Typography variant="body2" color="text.secondary" className={classes.contant}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            className={classes.content}
+          >
             {`There are ${seatsLeft} seats left`}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {`out of ${totalSeats}`}
+            {`out of ${totalPlaces}`}
           </Typography>
         </CardContent>
         <CardActions className={classes.cardActions}>
-          <Button size="small" className={classes.button} onClick={handleOpenDialog}>
+          <Button
+            size="small"
+            className={classes.button}
+            onClick={handleOpenDialog}
+          >
             Students List
           </Button>
           <DeleteIcon
-            onClick={() => deleteClassMutation.mutate(classId)}
+            onClick={() => handleDeleteClass(classId)}
             sx={{
               color: iconColor,
               cursor: "pointer",
@@ -105,6 +108,7 @@ const StudentCard: React.FC<StudentCardProps> = ({
       <StudentsListInClass
         open={openDialog}
         onClose={handleCloseDialog}
+        classId={classId}
         students={students}
       />
     </>

@@ -1,8 +1,7 @@
-import api from "../../../api/api";
+import React from "react";
 import List from "@mui/material/List";
 import Dialog from "@mui/material/Dialog";
 import Avatar from "@mui/material/Avatar";
-import { useEffect, useState } from "react";
 import ListItem from "@mui/material/ListItem";
 import IconButton from "@mui/material/IconButton";
 import { useStyles } from "./studentsInClassList.styles";
@@ -10,37 +9,25 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
 import ListItemText from "@mui/material/ListItemText";
-import { useMutation, useQueryClient } from "react-query";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import { useThemeContext } from "../../../themes/ThemeContext";
-import { StudentProps } from "../../../interfaces/student.interface";
+import { useUnassignStudent } from "../../../hooks/useClassMutation";
+import { StudentsListInClassProps } from "../../../interfaces/class.interface";
 
-const StudentsListInClass = ({ open, onClose, students }: StudentProps) => {
-  const [localStudents, setLocalStudents] = useState(students);
-  const queryClient = useQueryClient();
+
+const StudentsListInClass: React.FC<StudentsListInClassProps> = ({
+  open,
+  onClose,
+  students,
+}) => {
   const { isBlueTheme } = useThemeContext();
   const classes = useStyles();
 
-  useEffect(() => {
-    setLocalStudents(students);
-  }, [students]);
+  const { mutate: unassignStudent } = useUnassignStudent();
 
-  const unassignStudent = useMutation(
-    async (studentId: string) => {
-      await api.patch(`/students/${studentId}/unassign`, { classId: null });
-    },
-    {
-      onSuccess: (_, studentId) => {
-        setLocalStudents((prevStudents) =>
-          prevStudents.filter((student) => student.id !== studentId)
-        );
-        queryClient.invalidateQueries("students");
-      },
-    }
-  );
-
-  const handleUnassign = (studentId: string) => {
-    unassignStudent.mutate(studentId);
+  const handleUnassignStudent = (studentId: string) => {
+    unassignStudent(studentId);
+    console.log("Unassigned student, current state:", students);
   };
 
   return (
@@ -53,8 +40,8 @@ const StudentsListInClass = ({ open, onClose, students }: StudentProps) => {
     >
       <DialogTitle className={classes.dialogTitle}>Class Students</DialogTitle>
       <List>
-        {localStudents.length > 0 ? (
-          localStudents.map((student) => (
+        {students.length > 0 ? (
+          students.map((student) => (
             <ListItem className={classes.listItem} key={student.id}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>
@@ -68,7 +55,7 @@ const StudentsListInClass = ({ open, onClose, students }: StudentProps) => {
               <IconButton
                 edge="end"
                 aria-label="delete"
-                onClick={() => handleUnassign(student.id)}
+                onClick={() => handleUnassignStudent(student.id)}
                 sx={{
                   color: isBlueTheme ? "blue" : "red",
                 }}
@@ -80,7 +67,7 @@ const StudentsListInClass = ({ open, onClose, students }: StudentProps) => {
         ) : (
           <ListItem>
             <ListItemText
-              primary="This class empty"
+              primary="This class is empty"
               primaryTypographyProps={{
                 className: classes.emptyStateText,
               }}

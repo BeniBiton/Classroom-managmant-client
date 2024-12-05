@@ -1,5 +1,4 @@
 import * as React from "react";
-import api from "../../../api/api";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import Button from "@mui/material/Button";
@@ -7,20 +6,13 @@ import TableRow from "@mui/material/TableRow";
 import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import { RootState } from "../../../redux/store";
-import { useDispatch, useSelector } from "react-redux";
 import TableContainer from "@mui/material/TableContainer";
-import { setStudents } from "../../../redux/studentsSlice";
 import { useStyles } from "./listOfStudentsComponent.styles";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { useQuery, useMutation, useQueryClient } from "react-query";
 import { ColumnData, IStudent } from "../../../interfaces/student.interface";
-import AssignToClass from "../assignToClassComponent/assignToClassComponent";
-
-const fetchStudents = async (): Promise<IStudent[]> => {
-  const response = await api.get("/students");
-  return response.data;
-};
+import { AssignToClass } from "../assignToClassComponent/assignToClassComponent";
+import { useDeleteStudent } from "../../../hooks/useClassMutation";
+import useFetchStudents from "../../../hooks/useFetchStudents";
 
 const columns: ColumnData[] = [
   { width: 150, label: "ID", dataKey: "id" },
@@ -56,7 +48,7 @@ const fixedHeaderContent = () => {
   const classes = useStyles();
   return (
     <TableRow className={classes.tableCellHeader}>
-      {columns.map((column) => (
+      {columns?.map((column) => (
         <TableCell
           key={column.dataKey}
           variant="head"
@@ -72,51 +64,22 @@ const fixedHeaderContent = () => {
 
 const ListOfStudentsTable: React.FC = () => {
   const [openDialog, setOpenDialog] = React.useState(false);
-  const [studentId, setStudentId] = React.useState<string>("");
-  const queryClient = useQueryClient();
+  const [selectedStudent, setSelectedStudent] = React.useState<IStudent | null>(
+    null
+  );
+  const { mutate: deleteStudent } = useDeleteStudent();
   const classes = useStyles();
-  const dispatch = useDispatch();
 
-  const students = useSelector(
-    (state: RootState) => state.students.studentsData
-  );
+  const students = useFetchStudents();
 
-  const { isLoading, isError, error } = useQuery<IStudent[]>(
-    ["students"],
-    fetchStudents,
-    {
-      onSuccess: (data) => {
-        dispatch(setStudents(data)); 
-      },
-    }
-  );
-
-  
-  const deleteStudent = useMutation(
-    async (id: string) => {
-      await api.delete(`/students/${id}`);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("students"); 
-      },
-    }
-  );
-
-  const handleClickOpen = (studentId: string) => {
-    setStudentId(studentId);
+  const handleClickOpen = (student: IStudent) => {
+    setSelectedStudent(student);
     setOpenDialog(true);
   };
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError)
-    return (
-      <p>Error: {error instanceof Error ? error.message : "Unknown error"}</p>
-    );
-
   const rowContent = (_index: number, row: IStudent) => (
     <React.Fragment>
-      {columns.map((column) => {
+      {columns?.map((column) => {
         if (column.dataKey === "assign") {
           return (
             <TableCell key={column.dataKey} className={classes.tableCell}>
@@ -124,7 +87,7 @@ const ListOfStudentsTable: React.FC = () => {
                 <Button
                   className={classes.button}
                   variant="outlined"
-                  onClick={() => handleClickOpen(row.id)}
+                  onClick={() => handleClickOpen(row)}
                   disabled={!!row.classId}
                 >
                   Assign to Class
@@ -139,7 +102,7 @@ const ListOfStudentsTable: React.FC = () => {
               <Button
                 className={classes.button}
                 variant="outlined"
-                onClick={() => deleteStudent.mutate(row.id)}
+                onClick={() => deleteStudent(row.id)}
               >
                 Delete
               </Button>
@@ -165,12 +128,13 @@ const ListOfStudentsTable: React.FC = () => {
           itemContent={rowContent}
         />
       </Paper>
-
-      <AssignToClass
-        studentId={studentId}
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-      />
+      {selectedStudent && openDialog && (
+        <AssignToClass
+          student={selectedStudent}
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+        />
+      )}
     </>
   );
 };

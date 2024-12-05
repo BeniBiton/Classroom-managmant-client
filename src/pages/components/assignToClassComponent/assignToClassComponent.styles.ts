@@ -6,8 +6,8 @@ export const useStyles = makeStyles(() => ({
         justifyContent: "center"
     },
     class_item: {
-        paddingLeft: "2.8rem",
-        paddingRight: "2.8rem"
+        paddingLeft: "2.8rem !important",
+        paddingRight: "2.8rem !important"
     },
     list_item_avatar: {
         paddingRight: "1rem"

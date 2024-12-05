@@ -1,12 +1,15 @@
 import React, { ReactNode } from "react";
-import { useFetchClasses } from "../../../hooks/useFetchClasses";
+import useFetchClasses from "../../../hooks/useFetchClasses";
+import useFetchStudents from "../../../hooks/useFetchStudents";
 
 interface ClassFetcherProps {
   children?: ReactNode;
 }
 
 const ClassFetcher: React.FC<ClassFetcherProps> = ({ children }) => {
-  useFetchClasses(); 
+  useFetchClasses();
+  useFetchStudents()
+
 
   return <>{children}</>; 
 };

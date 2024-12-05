@@ -15,7 +15,7 @@ export const useStyles = makeStyles(() => ({
     fontWeight: "bold !important"
     
   },
-  contant: {
+  content: {
     paddingTop: "0.8rem"
   },
   cardActions: {

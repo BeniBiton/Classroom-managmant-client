@@ -1,23 +1,31 @@
-import { useDispatch } from "react-redux";
-import { ClassItem, setClasses } from "../redux/classesSlice";
 import { useQuery } from "react-query";
-import api from "../api/api";
-import { AppDispatch } from "../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { setClasses } from "../redux/classesSlice";
+import { fetchClasses } from "../services/classes.service";
+import { ClassItem } from "../interfaces/class.interface";
 
-const fetchClasses = async () => {
-  const response = await api.get("/classes");
-  return response.data;
-};
+const useFetchClasses = () => {
+  const dispatch = useDispatch();
+   const classrooms: ClassItem[] = useSelector(
+    (state: RootState) => state.classrooms.classesData
+  );
 
-export const useFetchClasses = () => {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const query = useQuery("classes", fetchClasses, {
-    onSuccess: (data: ClassItem[]) => {
-      dispatch(setClasses(data)); 
+  const { data, isLoading, error } = useQuery<ClassItem[]>("classes", fetchClasses, {
+    onSuccess: (data) => {
+      if (data) {
+        dispatch(setClasses(data));
+      }
     },
-    refetchOnWindowFocus: false, 
+    staleTime: Infinity,
   });
 
-  return query; 
+  if (isLoading) return null;
+  if (error) {
+    console.log("Error fetching students", error)
+  }
+
+  return data || classrooms;
 };
+
+export default useFetchClasses;

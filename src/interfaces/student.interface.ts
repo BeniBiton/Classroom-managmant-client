@@ -4,35 +4,35 @@ export interface IStudent {
     lastName: string;
     age: number;
     proffesion: string;
-    classId: string;
+    classId: string | null;
   }
 
   export interface StudentProps {
     open: boolean;
-    students: IStudent[];
+    students: IStudent[] | null;
     onClose: (value: string) => void;
+    seatsLeft: number
   }
 
   export interface StudentCardProps {
     className: string;
-    seatsLeft: number;
-    totalSeats: number;
+    totalPlaces: number;
     classId: string;
+    students: IStudent[];
   }
   
   export interface SutdentsForClassProps {
     open: boolean;
     onClose: () => void;
-    studentId: string;
+    student: IStudent;
   }
-
+  // fix: 2 interfaces
   export interface Data {
     id: string;
     firstName: string;
     lastName: string;
     age: number;
     profession: string;
-    classId: string
   }
   export interface ColumnData {
     dataKey: keyof Data | "assign" | "delete";

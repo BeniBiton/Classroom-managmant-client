@@ -9,56 +9,51 @@ import {
   Avatar,
   IconButton,
 } from "@mui/material";
-import api from "../../../api/api";
-import { RootState } from "../../../redux/store";
-import { useSelector, useDispatch } from "react-redux";
-import { setClasses } from "../../../redux/classesSlice";
-import { useStyles } from "./assignToClassComponent.styles";
-import { assignStudentToClass } from "../../../redux/studentsSlice";
 import { School as SchoolIcon, Add as AddIcon } from "@mui/icons-material";
-import { SutdentsForClassProps } from "../../../interfaces/student.interface";
+import {
+  IStudent,
+  SutdentsForClassProps,
+} from "../../../interfaces/student.interface";
+import { assignStudentToClass } from "../../../services/students.service";
+import { useDispatch, useSelector } from "react-redux";
+import { updateStudentClass } from "../../../redux/studentsSlice";
+import useFetchStudents from "../../../hooks/useFetchStudents";
+import { updateStudentByClass } from "../../../redux/classesSlice";
+import { ClassItem } from "../../../interfaces/class.interface";
+import { RootState } from "../../../redux/store";
+import { useStyles } from "./assignToClassComponent.styles";
 
-const AssignToClass: React.FC<SutdentsForClassProps> = ({
+export const AssignToClass: React.FC<SutdentsForClassProps> = ({
   onClose,
   open,
-  studentId,
+  student,
 }) => {
-  const dispatch = useDispatch();
-  const classrooms = useSelector(
-    (state: RootState) => state.classes.classesData
+  const classrooms: ClassItem[] = useSelector(
+    (state: RootState) => state.classrooms.classesData
   );
-  const classes = useStyles();
+  const students = useFetchStudents();
+  const dispatch = useDispatch();
+  const classes = useStyles()
 
-  // Fetch classes if not already in state
-  if (classrooms.length === 0) {
-    api
-      .get("/classes")
-      .then((response) => dispatch(setClasses(response.data)))
-      .catch((error) => console.error("Error fetching classes:", error));
-  }
+  const calculateStudentsInClass = (classId: string) => {
+    return (
+      students?.filter((student) => student.classId === classId).length ?? 0
+    );
+  };
 
   const handleClose = () => {
     onClose();
   };
 
   const handleAssignStudentToClass = async (
-    studentId: string,
+    student: IStudent,
     classId: string
   ) => {
     try {
-      // Assign student to class via API
-      await api.post("/students/assign-to-class", { studentId, classId });
+      await assignStudentToClass(student.id, classId);
 
-      // Update Redux with new assignment
-      dispatch(assignStudentToClass({ studentId, classId }));
-
-      // Update classes state to reflect reduced seats
-      const updatedClassrooms = classrooms.map((classItem) =>
-        classItem.id === classId
-          ? { ...classItem, seatsLeft: classItem.seatsLeft - 1 }
-          : classItem
-      );
-      dispatch(setClasses(updatedClassrooms));
+      dispatch(updateStudentClass({ studentId: student.id, classId }));
+      dispatch(updateStudentByClass({ student: student, classId }));
 
       onClose();
     } catch (error) {
@@ -66,36 +61,29 @@ const AssignToClass: React.FC<SutdentsForClassProps> = ({
     }
   };
 
-  const availableClasses = classrooms.filter(
-    (classItem) => classItem.seatsLeft > 0
-  );
-
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle className={classes.dialog_text}>
-        Available Classes
-      </DialogTitle>
+      <DialogTitle className={classes.dialog_text}>Available Classes</DialogTitle>
       <List>
-        {availableClasses.map((classItem) => (
-          <ListItem
-            key={classItem.id}
-            disableGutters
-            className={classes.class_item}
-          >
+        {classrooms?.map((classItem) => (
+          <ListItem key={classItem.id} className={classes.class_item} disableGutters>
             <ListItemAvatar className={classes.list_item_avatar}>
               <Avatar>
-                <SchoolIcon className={classes.schoolIcon} />
+                <SchoolIcon className={classes.schoolIcon}/>
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={classItem.className} />
+            <ListItemText primary={classItem.className}  />
             <IconButton
-              onClick={() =>
-                handleAssignStudentToClass(studentId, classItem.id)
-              }
+              onClick={() => handleAssignStudentToClass(student, classItem.id)}
               color="primary"
               title="Assign student to class"
+              disabled={
+                classItem.totalPlaces - calculateStudentsInClass(classItem.id)
+                  ? false
+                  : true
+              }
             >
-              <AddIcon className={classes.icon_button} />
+              <AddIcon />
             </IconButton>
           </ListItem>
         ))}
@@ -103,5 +91,3 @@ const AssignToClass: React.FC<SutdentsForClassProps> = ({
     </Dialog>
   );
 };
-
-export default AssignToClass;

@@ -1,44 +1,22 @@
 import React, { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
-import api from "../../../api/api";
-
-const addStudent = async (newStudent: {
-  id: string;
-  firstName: string;
-  lastName: string;
-  age: number;
-  profession: string;
-}): Promise<void> => {
-  const response = await api.post("/students", newStudent);
-  return response.data;
-};
+import { useAddStudent } from "../../../hooks/useClassMutation";
 
 const AddStudentForm: React.FC = () => {
-  const queryClient = useQueryClient();
-
   const [id, setId] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [age, setAge] = useState<number>(0);
   const [profession, setProfession] = useState<string>("");
 
-
-  const mutation = useMutation(addStudent, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["classes"]);
-    },
-    onError: (error) => {
-      console.error("Error creating student:", error);
-    },
-  });
+  const { mutate: addNewStudent, isLoading } = useAddStudent();
 
   const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
-    mutation.mutate({ id, firstName, lastName, age, profession });
+    addNewStudent({ id, firstName, lastName, age, profession });
   };
 
   return (
@@ -94,9 +72,9 @@ const AddStudentForm: React.FC = () => {
         variant="contained"
         color="primary"
         sx={{ mt: 2, width: "300px" }}
-        disabled={mutation.isLoading}
+        disabled={isLoading} // Disable button if loading
       >
-        {mutation.isLoading ? "Creating..." : "Create Student"}
+        {isLoading ? "Creating..." : "Create Student"}
       </Button>
     </Box>
   );
