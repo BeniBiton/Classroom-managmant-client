@@ -1,27 +1,25 @@
-import React from "react";
 import {
-  Dialog,
   List,
-  DialogTitle,
+  Avatar,
+  Dialog,
   ListItem,
+  IconButton,
+  DialogTitle,
   ListItemText,
   ListItemAvatar,
-  Avatar,
-  IconButton,
 } from "@mui/material";
-import { School as SchoolIcon, Add as AddIcon } from "@mui/icons-material";
 import {
   IStudent,
   SutdentsForClassProps,
 } from "../../../interfaces/student.interface";
-import { assignStudentToClass } from "../../../services/students.service";
-import { useDispatch, useSelector } from "react-redux";
-import { updateStudentClass } from "../../../redux/studentsSlice";
-import useFetchStudents from "../../../hooks/useFetchStudents";
-import { updateStudentByClass } from "../../../redux/classesSlice";
-import { ClassItem } from "../../../interfaces/class.interface";
 import { RootState } from "../../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
 import { useStyles } from "./assignToClassComponent.styles";
+import { ClassItem } from "../../../interfaces/class.interface";
+import { updateStudentClass } from "../../../redux/studentsSlice";
+import { updateStudentByClass } from "../../../redux/classesSlice";
+import { assignStudentToClass } from "../../../services/students.service";
+import { School as SchoolIcon, Add as AddIcon } from "@mui/icons-material";
 
 export const AssignToClass: React.FC<SutdentsForClassProps> = ({
   onClose,
@@ -31,9 +29,11 @@ export const AssignToClass: React.FC<SutdentsForClassProps> = ({
   const classrooms: ClassItem[] = useSelector(
     (state: RootState) => state.classrooms.classesData
   );
-  const students = useFetchStudents();
+  const students = useSelector(
+    (state: RootState) => state.students.studentsData
+  );
   const dispatch = useDispatch();
-  const classes = useStyles()
+  const classes = useStyles();
 
   const calculateStudentsInClass = (classId: string) => {
     return (
@@ -63,16 +63,22 @@ export const AssignToClass: React.FC<SutdentsForClassProps> = ({
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle className={classes.dialog_text}>Available Classes</DialogTitle>
+      <DialogTitle className={classes.dialog_text}>
+        Available Classes
+      </DialogTitle>
       <List>
         {classrooms?.map((classItem) => (
-          <ListItem key={classItem.id} className={classes.class_item} disableGutters>
+          <ListItem
+            key={classItem.id}
+            className={classes.class_item}
+            disableGutters
+          >
             <ListItemAvatar className={classes.list_item_avatar}>
               <Avatar>
-                <SchoolIcon className={classes.schoolIcon}/>
+                <SchoolIcon className={classes.schoolIcon} />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={classItem.className}  />
+            <ListItemText primary={classItem.className} />
             <IconButton
               onClick={() => handleAssignStudentToClass(student, classItem.id)}
               color="primary"

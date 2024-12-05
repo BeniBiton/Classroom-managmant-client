@@ -1,30 +1,21 @@
-import * as React from "react";
-import Paper from "@mui/material/Paper";
+import React from "react";
+import { columns } from "./consts";
 import Table from "@mui/material/Table";
+import Paper from "@mui/material/Paper";
+import { useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import TableRow from "@mui/material/TableRow";
 import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
+import { RootState } from "../../../redux/store";
 import TableContainer from "@mui/material/TableContainer";
 import { useStyles } from "./listOfStudentsComponent.styles";
 import { TableVirtuoso, TableComponents } from "react-virtuoso";
-import { ColumnData, IStudent } from "../../../interfaces/student.interface";
-import { AssignToClass } from "../assignToClassComponent/assignToClassComponent";
+import { IStudent } from "../../../interfaces/student.interface";
 import { useDeleteStudent } from "../../../hooks/useClassMutation";
-import useFetchStudents from "../../../hooks/useFetchStudents";
+import { AssignToClass } from "../assignToClassComponent/assignToClassComponent";
 
-const columns: ColumnData[] = [
-  { width: 150, label: "ID", dataKey: "id" },
-  { width: 120, label: "First Name", dataKey: "firstName" },
-  { width: 120, label: "Last Name", dataKey: "lastName" },
-  { width: 50, label: "Age", dataKey: "age", numeric: true },
-  { width: 150, label: "Profession", dataKey: "profession" },
-  { width: 150, label: "Assign", dataKey: "assign" },
-  { width: 100, label: "Delete", dataKey: "delete" },
-];
-
-// TableVirtuoso Components
 const VirtuosoTableComponents: TableComponents<IStudent> = {
   Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
     <TableContainer component={Paper} {...props} ref={ref} />
@@ -70,7 +61,9 @@ const ListOfStudentsTable: React.FC = () => {
   const { mutate: deleteStudent } = useDeleteStudent();
   const classes = useStyles();
 
-  const students = useFetchStudents();
+  const students = useSelector(
+    (state: RootState) => state.students.studentsData
+  );
 
   const handleClickOpen = (student: IStudent) => {
     setSelectedStudent(student);

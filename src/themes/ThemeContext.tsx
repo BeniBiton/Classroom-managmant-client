@@ -1,6 +1,5 @@
-// ThemeContext.tsx
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import React, { createContext, useState, useContext } from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles"
 
 export const blueTheme = createTheme({
   palette: {
@@ -25,7 +24,9 @@ interface ThemeContextProps {
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
-export const ThemeProviderWithContext: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProviderWithContext: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [isBlueTheme, setIsBlueTheme] = useState(true);
 
   const toggleTheme = () => setIsBlueTheme((prev) => !prev);
@@ -42,7 +43,9 @@ export const ThemeProviderWithContext: React.FC<{ children: React.ReactNode }> =
 export const useThemeContext = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error("useThemeContext must be used within ThemeProviderWithContext");
+    throw new Error(
+      "useThemeContext must be used within ThemeProviderWithContext"
+    );
   }
   return context;
 };

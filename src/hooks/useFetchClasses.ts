@@ -1,9 +1,9 @@
 import { useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { setClasses } from "../redux/classesSlice";
-import { fetchClasses } from "../services/classes.service";
+import { useDispatch, useSelector } from "react-redux";
 import { ClassItem } from "../interfaces/class.interface";
+import { fetchClasses } from "../services/classes.service";
 
 const useFetchClasses = () => {
   const dispatch = useDispatch();

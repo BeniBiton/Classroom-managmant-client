@@ -1,12 +1,12 @@
 import React from "react";
-import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import { Link } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
+import ListItem from "@mui/material/ListItem";
 import Backdrop from "@mui/material/Backdrop";
+import ListItemText from "@mui/material/ListItemText";
 import { useStyles } from "./sideMenuComponent.styles";
+import ListItemButton from "@mui/material/ListItemButton";
 
 type SidebarProps = {
   open: boolean;

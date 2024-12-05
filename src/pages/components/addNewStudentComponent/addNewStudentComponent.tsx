@@ -1,8 +1,7 @@
-import React, { useState } from "react";
 import Box from "@mui/material/Box";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-
 import { useAddStudent } from "../../../hooks/useClassMutation";
 
 const AddStudentForm: React.FC = () => {

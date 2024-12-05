@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ClassItem } from "../interfaces/class.interface";
 import { IStudent } from "../interfaces/student.interface";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ClassesState {
   classesData: ClassItem[];

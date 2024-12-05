@@ -1,7 +1,7 @@
-import { setStudents } from "../redux/studentsSlice";
 import { useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { setStudents } from "../redux/studentsSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { IStudent } from "../interfaces/student.interface";
 import { fetchAllStudents } from "../services/students.service";
 
@@ -10,7 +10,7 @@ const useFetchStudents = () => {
   const dispatch = useDispatch();
   const students = useSelector((state: RootState) => state.students.studentsData);
 
-  const { data, isLoading, error } = useQuery<IStudent[]>(
+  const { data } = useQuery<IStudent[]>(
     "students",
     fetchAllStudents,
     {

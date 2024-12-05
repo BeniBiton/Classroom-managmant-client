@@ -6,8 +6,8 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { useStyles } from "./navbarComponent.styles";
 import LoyaltyIcon from "@mui/icons-material/Loyalty";
-import { NavbarProps } from "../../../interfaces/class.interface";
 import { useThemeContext } from "../../../themes/ThemeContext";
+import { NavbarProps } from "../../../interfaces/class.interface";
 
 
 

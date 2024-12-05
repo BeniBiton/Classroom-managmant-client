@@ -1,11 +1,11 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { Box, Grid } from "@mui/material";
-import { useStyles } from "./Classes.style";
-import { Sidebar } from "../components/sideMenuComponent/sideMenuComponent";
-import Navbar from "../components/navbarComponent/navbarComponent";
-import StudentCard from "../components/cardComponent/cardComponent";
 import { useSelector } from "react-redux";
+import { useStyles } from "./Classes.style";
 import { RootState } from "../../redux/store";
+import Navbar from "../components/navbarComponent/navbarComponent";
+import ClassCard from "../components/cardComponent/cardComponent";
+import { Sidebar } from "../components/sideMenuComponent/sideMenuComponent";
 
 const Classes: React.FC = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState<boolean>(false);
@@ -27,7 +27,7 @@ const Classes: React.FC = () => {
         <Grid className={classesStyle.gridContainer}>
           {classrooms?.map((classItem) => (
             <Grid item key={classItem.id}>
-              <StudentCard
+              <ClassCard
                 classId={classItem.id}
                 className={classItem.className}
                 totalPlaces={classItem.totalPlaces}

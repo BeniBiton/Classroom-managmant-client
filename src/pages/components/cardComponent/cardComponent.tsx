@@ -1,25 +1,25 @@
+import {
+  redTheme,
+  blueTheme,
+  useThemeContext,
+} from "../../../themes/ThemeContext";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
+import { RootState } from "../../../redux/store";
 import Typography from "@mui/material/Typography";
 import { useStyles } from "./cardComponent.styles";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  useThemeContext,
-  redTheme,
-  blueTheme,
-} from "../../../themes/ThemeContext";
-import { StudentCardProps } from "../../../interfaces/student.interface";
-import StudentsListInClass from "../studentsInClassList/studentsInClassList";
-import { useDeleteClass } from "../../../hooks/useClassMutation";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
 import { ClassItem } from "../../../interfaces/class.interface";
+import { useDeleteClass } from "../../../hooks/useClassMutation";
 import { removeStudentInClass } from "../../../redux/studentsSlice";
+import { ClassCardProps } from "../../../interfaces/student.interface";
+import StudentsListInClass from "../studentsInClassList/studentsInClassList";
 
-const StudentCard: React.FC<StudentCardProps> = ({
+const ClassCard: React.FC<ClassCardProps> = ({
   className,
   classId,
   totalPlaces,
@@ -28,8 +28,8 @@ const StudentCard: React.FC<StudentCardProps> = ({
   const classes = useStyles();
   const { isBlueTheme } = useThemeContext();
   const [openDialog, setOpenDialog] = useState(false);
-  const [seatsLeft, setSeatsLeft] = useState(totalPlaces); 
-  const dispatch = useDispatch()
+  const [seatsLeft, setSeatsLeft] = useState(totalPlaces);
+  const dispatch = useDispatch();
 
   const { mutate: deleteClass } = useDeleteClass();
 
@@ -42,24 +42,26 @@ const StudentCard: React.FC<StudentCardProps> = ({
 
   useEffect(() => {
     const numStudentsInClass =
-      classrooms.find((classItem) => classItem.id === classId)?.students.length ||
-      0;
+      classrooms.find((classItem) => classItem.id === classId)?.students
+        .length || 0;
     setSeatsLeft(totalPlaces - numStudentsInClass);
   }, [classrooms, classId, totalPlaces]);
 
   const handleDeleteClass = (classId: string) => {
-    classrooms.map((classItem) => {
-      if(classItem.id === classId) {
-        classItem.students.map((studentItem) => {
-          dispatch(removeStudentInClass(studentItem.id))
-        })
-      }
-    })
-    deleteClass(classId)
-  }
-  
-  
+    // Find the class to delete
+    const classToDelete = classrooms.find(
+      (classItem) => classItem.id === classId
+    );
 
+    if (classToDelete) {
+      // Remove all students in the class
+      classToDelete.students.forEach((studentItem) => {
+        dispatch(removeStudentInClass(studentItem.id)); // Unassign student
+      });
+    }
+
+    deleteClass(classId);
+  };
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -115,4 +117,4 @@ const StudentCard: React.FC<StudentCardProps> = ({
   );
 };
 
-export default StudentCard;
+export default ClassCard;

@@ -1,7 +1,5 @@
-import { IStudent } from "../interfaces/student.interface";
 import api from "../api/api";
-
-
+import { IStudent } from "../interfaces/student.interface";
 
 export const fetchAllStudents = async (): Promise<IStudent[]> => {
   const response = await api.get<IStudent[]>("/students");

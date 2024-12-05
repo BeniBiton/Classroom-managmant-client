@@ -1,5 +1,3 @@
-// classes.service.ts
-
 import api from "../api/api";
 import { ClassItem } from "../interfaces/class.interface";
 import { IStudent } from "../interfaces/student.interface";

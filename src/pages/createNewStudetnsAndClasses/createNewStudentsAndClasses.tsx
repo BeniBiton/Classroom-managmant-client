@@ -2,9 +2,9 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import { useStyles } from "./createNewStudentsAndClasses.styles";
 import Navbar from "../components/navbarComponent/navbarComponent";
+import { Sidebar } from "../components/sideMenuComponent/sideMenuComponent";
 import AddStudentForm from "../components/addNewStudentComponent/addNewStudentComponent";
 import CreateClassForm from "../components/createNewClassComponent/createNewClassComponent";
-import { Sidebar } from "../components/sideMenuComponent/sideMenuComponent";
 
 const CreateNewStudentsAndClasses = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
