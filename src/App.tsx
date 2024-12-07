@@ -1,23 +1,24 @@
 import React from "react";
 import store from "./redux/store";
-import Router from "./routes/Router";
 import { Provider } from "react-redux";
-import { QueryClient, QueryClientProvider } from "react-query";
+import AppRouter from "./routes/Router";
+import Layout from "./pages/components/Layout/Layout";
+import { BrowserRouter } from "react-router-dom";
 import { ThemeProviderWithContext } from "./themes/ThemeContext";
 import ClassFetcher from "./pages/components/classFatcher/classFetcher";
 
-const queryClient = new QueryClient();
-
 const App: React.FC = () => (
-  <QueryClientProvider client={queryClient}>
-    <Provider store={store}>
-      <ThemeProviderWithContext>
+  <Provider store={store}>
+    <ThemeProviderWithContext>
+      <BrowserRouter>
         <ClassFetcher>
-          <Router />
+          <Layout>
+            <AppRouter />
+          </Layout>
         </ClassFetcher>
-      </ThemeProviderWithContext>
-    </Provider>
-  </QueryClientProvider>
+      </BrowserRouter>
+    </ThemeProviderWithContext>
+  </Provider>
 );
 
 export default App;

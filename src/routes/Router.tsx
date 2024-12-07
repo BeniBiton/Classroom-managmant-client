@@ -1,8 +1,8 @@
 import React from "react";
 import Classes from "../pages/classes/Classes";
 import Students from "../pages/students/students";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CreateNewStudentsAndClasses from "../pages/createNewStudetnsAndClasses/createNewStudentsAndClasses";
+import { Route, Routes } from "react-router-dom"; // Removed BrowserRouter
 
 const routes = [
   { path: "/", element: <Classes /> },
@@ -12,13 +12,11 @@ const routes = [
 
 const AppRouter: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        {routes.map(({ path, element }) => (
-          <Route key={path} path={path} element={element} />
-        ))}
-      </Routes>
-    </Router>
+    <Routes>
+      {routes.map(({ path, element }) => (
+        <Route key={path} path={path} element={element} />
+      ))}
+    </Routes>
   );
 };
 
