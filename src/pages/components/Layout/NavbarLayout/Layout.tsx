@@ -1,9 +1,9 @@
 // src/components/Layout/Layout.tsx
-import React, { useState } from "react";
 import { Box } from "@mui/material";
-import Navbar from "../navbarComponent/navbarComponent";
-import { Sidebar } from "../sideMenuComponent/sideMenuComponent";
-import { LayoutProps } from "../../../interfaces/layout.interface";
+import React, { useState } from "react";
+import Navbar from "../../navbarComponent/navbarComponent";
+import { Sidebar } from "../../sideMenuComponent/sideMenuComponent";
+import { LayoutProps } from "../../../../interfaces/layout.interface";
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
