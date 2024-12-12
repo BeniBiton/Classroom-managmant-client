@@ -1,11 +1,12 @@
 import React from "react";
 import Classes from "../pages/classes/Classes";
+import { Route, Routes } from "react-router-dom";
 import Students from "../pages/students/students";
 import CreateNewStudentsAndClasses from "../pages/createNewStudetnsAndClasses/createNewStudentsAndClasses";
-import { Route, Routes } from "react-router-dom"; // Removed BrowserRouter
 
 const routes = [
   { path: "/", element: <Classes /> },
+  { path: "/classes", element: <Classes /> },
   { path: "/students", element: <Students /> },
   { path: "/create", element: <CreateNewStudentsAndClasses /> },
 ];

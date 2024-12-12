@@ -7,7 +7,7 @@ import { fetchClasses } from "../services/classes.service";
 
 const useFetchClasses = () => {
   const dispatch = useDispatch();
-   const classrooms: ClassItem[] = useSelector(
+  const classrooms: ClassItem[] = useSelector(
     (state: RootState) => state.classrooms.classesData
   );
 
@@ -22,10 +22,10 @@ const useFetchClasses = () => {
 
   if (isLoading) return null;
   if (error) {
-    console.log("Error fetching students", error)
+    console.log("Error fetching classes")
   }
 
-  return data || classrooms;
+  return data || classrooms || [];
 };
 
 export default useFetchClasses;

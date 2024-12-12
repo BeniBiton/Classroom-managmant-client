@@ -7,16 +7,17 @@ export const useStyles = makeStyles(() => ({
         maxWidth: "50rem !important"
     },
     headline: {
-        fontSize: "2.75rem",
+        fontSize: "2.60rem !important",
         display: "flex",
         justifyContent: "center",
-        marginBottom: "0.2rem"
+        marginBottom: "0.2rem !important",
+        font: "Heebo"
     },
     box: {
         display: "flex",
         justifyContent: "space-around",
-        padding: "1.6rem",
-        height: "100vh",
+        padding: "1.6rem !important",
+        height: "100vh !important",
         backgroundColor: "#f9f9f9"
     },
 }))

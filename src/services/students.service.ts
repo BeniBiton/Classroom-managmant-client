@@ -16,7 +16,7 @@ export const assignStudentToClass = async (
   studentId: string,
   classId: string
 ) => {
-  await api.post("/students/assign-to-class", { studentId, classId });
+  await api.patch("/students/assign-to-class", { studentId, classId });
 };
 
 export const addStudent = async (newStudent: {

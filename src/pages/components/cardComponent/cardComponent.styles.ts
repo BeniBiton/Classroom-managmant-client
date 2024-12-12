@@ -4,6 +4,7 @@ export const useStyles = makeStyles(() => ({
   delete_icon: {
     background: "#3f50b5",
     color: "#3f50b5",
+  
   },
   card_style: {
     width: "200px",

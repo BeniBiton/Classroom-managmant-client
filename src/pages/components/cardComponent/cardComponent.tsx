@@ -5,7 +5,7 @@ import {
 } from "../../../themes/ThemeContext";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { RootState } from "../../../redux/store";
 import Typography from "@mui/material/Typography";
 import { useStyles } from "./cardComponent.styles";
@@ -16,9 +16,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { ClassItem } from "../../../interfaces/class.interface";
 import { useDeleteClass } from "../../../hooks/useClassMutation";
 import { removeStudentInClass } from "../../../redux/studentsSlice";
+import { unassignStudent } from "../../../services/classes.service";
 import { ClassCardProps } from "../../../interfaces/student.interface";
 import StudentsListInClass from "../studentsInClassList/studentsInClassList";
-import { unassignStudent } from "../../../services/classes.service";
 
 const ClassCard: React.FC<ClassCardProps> = ({
   className,
@@ -29,7 +29,6 @@ const ClassCard: React.FC<ClassCardProps> = ({
   const classes = useStyles();
   const { isBlueTheme } = useThemeContext();
   const [openDialog, setOpenDialog] = useState(false);
-  const [seatsLeft, setSeatsLeft] = useState(totalPlaces);
   const dispatch = useDispatch();
 
   const { mutate: deleteClass } = useDeleteClass();
@@ -41,12 +40,16 @@ const ClassCard: React.FC<ClassCardProps> = ({
     (state: RootState) => state.classrooms.classesData || []
   );
 
-  useEffect(() => {
+  const seatsLeft = useMemo(() => {
     const classItem = classrooms.find((classItem) => classItem.id === classId);
     const numStudentsInClass = classItem?.students?.length || 0;
-    setSeatsLeft(totalPlaces - numStudentsInClass);
+    return totalPlaces - numStudentsInClass;
   }, [classrooms, classId, totalPlaces]);
-  
+
+  const unassginStudentReduxAndDb = (studentId: string) => {
+    unassignStudent(studentId);
+    dispatch(removeStudentInClass(studentId));
+  };
 
   const handleDeleteClass = (classId: string) => {
     const classToDelete = classrooms.find(
@@ -55,8 +58,7 @@ const ClassCard: React.FC<ClassCardProps> = ({
 
     if (classToDelete) {
       classToDelete.students.forEach((studentItem) => {
-        unassignStudent(studentItem.id); // unassign student from db
-        dispatch(removeStudentInClass(studentItem.id)); // Unassign student from redux
+        unassginStudentReduxAndDb(studentItem.id);
       });
     }
 

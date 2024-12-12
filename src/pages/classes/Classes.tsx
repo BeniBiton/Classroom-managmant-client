@@ -15,15 +15,13 @@ const Classes: React.FC = () => {
   return (
     <Box className={classesStyle.box}>
       <Grid className={classesStyle.gridContainer}>
-        {classrooms?.map((classItem) => (
-          <Grid item key={classItem.id}>
-            <ClassCard
-              classId={classItem.id}
-              className={classItem.className}
-              totalPlaces={classItem.totalPlaces}
-              students={classItem.students}
-            />
-          </Grid>
+        {classrooms?.map(({ id, className, totalPlaces, students }) => (
+          <ClassCard
+            classId={id}
+            className={className}
+            totalPlaces={totalPlaces}
+            students={students}
+          />
         ))}
       </Grid>
     </Box>

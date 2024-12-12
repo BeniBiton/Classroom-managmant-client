@@ -6,10 +6,8 @@ const Students = () => {
   const studentsStyles = useStyles();
 
   return (
-    <Box>
-      <Box className={studentsStyles.table_container}>
-        <ListOfStudentsTable />
-      </Box>
+    <Box className={studentsStyles.table_container}>
+      <ListOfStudentsTable />
     </Box>
   );
 };

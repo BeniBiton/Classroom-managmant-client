@@ -10,18 +10,23 @@ const useFetchStudents = () => {
   const dispatch = useDispatch();
   const students = useSelector((state: RootState) => state.students.studentsData);
 
-  const { data } = useQuery<IStudent[]>(
+  const { data, error, isLoading } = useQuery<IStudent[]>(
     "students",
     fetchAllStudents,
     {
       onSuccess: (data) => {
-        dispatch(setStudents(data)); 
+        dispatch(setStudents(data));
       },
-      staleTime: Infinity, 
+      staleTime: Infinity,
     }
   );
+  if (isLoading) return null;
+  if (error) {
+    console.log("Error fetching students");
 
-  return students.length ? students : data || [];
+  }
+
+  return students || data || [];
 };
 
 

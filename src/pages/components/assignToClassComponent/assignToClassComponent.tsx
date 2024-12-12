@@ -41,8 +41,9 @@ export const AssignToClass: React.FC<SutdentsForClassProps> = ({
     );
   };
 
-  const handleClose = () => {
-    onClose();
+  const updateStudentInRedux = (student: IStudent, classId: string) => {
+    dispatch(updateStudentClass({ studentId: student.id, classId }));
+    dispatch(updateStudentByClass({ student: student, classId }));
   };
 
   const handleAssignStudentToClass = async (
@@ -52,8 +53,7 @@ export const AssignToClass: React.FC<SutdentsForClassProps> = ({
     try {
       await assignStudentToClass(student.id, classId);
 
-      dispatch(updateStudentClass({ studentId: student.id, classId }));
-      dispatch(updateStudentByClass({ student: student, classId }));
+      updateStudentInRedux(student, classId);
 
       onClose();
     } catch (error) {
@@ -62,7 +62,7 @@ export const AssignToClass: React.FC<SutdentsForClassProps> = ({
   };
 
   return (
-    <Dialog onClose={handleClose} open={open}>
+    <Dialog onClose={onClose} open={open}>
       <DialogTitle className={classes.dialog_text}>
         Available Classes
       </DialogTitle>
@@ -84,9 +84,9 @@ export const AssignToClass: React.FC<SutdentsForClassProps> = ({
               color="primary"
               title="Assign student to class"
               disabled={
-                classItem.totalPlaces - calculateStudentsInClass(classItem.id)
-                  ? false
-                  : true
+                classItem.totalPlaces -
+                  calculateStudentsInClass(classItem.id) ===
+                0
               }
             >
               <AddIcon />

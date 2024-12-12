@@ -1,57 +1,17 @@
 import React from "react";
 import { columns } from "./consts";
-import Table from "@mui/material/Table";
 import Paper from "@mui/material/Paper";
 import { useSelector } from "react-redux";
-import Button from "@mui/material/Button";
-import TableRow from "@mui/material/TableRow";
-import TableHead from "@mui/material/TableHead";
 import TableCell from "@mui/material/TableCell";
-import TableBody from "@mui/material/TableBody";
 import { RootState } from "../../../redux/store";
-import TableContainer from "@mui/material/TableContainer";
 import { useStyles } from "./listOfStudentsComponent.styles";
-import { TableVirtuoso, TableComponents } from "react-virtuoso";
+import { TableVirtuoso } from "react-virtuoso";
 import { IStudent } from "../../../interfaces/student.interface";
 import { useDeleteStudent } from "../../../hooks/useClassMutation";
+import { VirtuosoTableComponents } from "./renderTable/renderTable";
 import { AssignToClass } from "../assignToClassComponent/assignToClassComponent";
-
-const VirtuosoTableComponents: TableComponents<IStudent> = {
-  Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
-    <TableContainer component={Paper} {...props} ref={ref} />
-  )),
-  Table: (props) => (
-    <Table
-      {...props}
-      sx={{ borderCollapse: "separate", tableLayout: "fixed" }}
-    />
-  ),
-  TableHead: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableHead {...props} ref={ref} />
-  )),
-  TableRow,
-  TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
-    <TableBody {...props} ref={ref} />
-  )),
-};
-
-const fixedHeaderContent = () => {
-  const classes = useStyles();
-  return (
-    <TableRow className={classes.tableCellHeader}>
-      {columns?.map((column) => (
-        <TableCell
-          key={column.dataKey}
-          variant="head"
-          style={{ width: column.width }}
-          className={classes.tableCellHeader}
-        >
-          {column.label}
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-};
+import { HeaderContent } from "./headerContent/HeaderContent";
+import { CellButton } from "./cellButton/CellButton";
 
 const ListOfStudentsTable: React.FC = () => {
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -71,34 +31,20 @@ const ListOfStudentsTable: React.FC = () => {
   };
 
   const rowContent = (_index: number, row: IStudent) => (
-    <React.Fragment>
+    <>
       {columns?.map((column) => {
         if (column.dataKey === "assign") {
+          const isAssigned = row.classId != null && row.classId !== "";
           return (
             <TableCell key={column.dataKey} className={classes.tableCell}>
-              {!row.classId && (
-                <Button
-                  className={classes.button}
-                  variant="outlined"
-                  onClick={() => handleClickOpen(row)}
-                  disabled={!!row.classId}
-                >
-                  Assign to Class
-                </Button>
-              )}
+              {<CellButton onClick={() => handleClickOpen(row)} disabled={isAssigned} buttonName={"Assign To Class"}></CellButton>}
             </TableCell>
           );
         }
         if (column.dataKey === "delete") {
           return (
             <TableCell key={column.dataKey} className={classes.tableCell}>
-              <Button
-                className={classes.button}
-                variant="outlined"
-                onClick={() => deleteStudent(row.id)}
-              >
-                Delete
-              </Button>
+              {<CellButton onClick={() => deleteStudent(row.id)} disabled={false} buttonName={"Delete"}></CellButton>}
             </TableCell>
           );
         }
@@ -108,7 +54,7 @@ const ListOfStudentsTable: React.FC = () => {
           </TableCell>
         );
       })}
-    </React.Fragment>
+    </>
   );
 
   return (
@@ -117,7 +63,7 @@ const ListOfStudentsTable: React.FC = () => {
         <TableVirtuoso
           data={students}
           components={VirtuosoTableComponents}
-          fixedHeaderContent={fixedHeaderContent}
+          fixedHeaderContent={HeaderContent}
           itemContent={rowContent}
         />
       </Paper>

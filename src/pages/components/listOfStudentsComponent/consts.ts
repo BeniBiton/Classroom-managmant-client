@@ -1,5 +1,6 @@
 import { ColumnData } from "../../../interfaces/student.interface";
 
+// fix: upperCase
 export const columns: ColumnData[] = [
     { width: 150, label: "ID", dataKey: "id" },
     { width: 120, label: "First Name", dataKey: "firstName" },

@@ -16,8 +16,8 @@ export const useUnassignStudent = () => {
       dispatch(removeStudentFromClass(studentId));
       dispatch(removeStudentInClass(studentId))
     },
-    onError: (error) => {
-      console.error("Failed to unassign student:", error);
+    onError: () => {
+      console.error("Failed to unassign student");
     },
   });
 };
@@ -30,8 +30,8 @@ export const useDeleteClass = () => {
     onSuccess: (_, classId) => {
       dispatch(deleteClassRedux(classId));
     },
-    onError: (error) => {
-      console.error("Failed to delete class:", error);
+    onError: () => {
+      console.error("Failed to delete class");
     },
   });
 };
@@ -43,8 +43,8 @@ export const useDeleteStudent = () => {
     onSuccess: (_, studentId) => {
       dispatch(deleteStudentRedux(studentId)); 
     },
-    onError: (error) => {
-      console.error("Failed to delete student:", error);
+    onError: () => {
+      console.error("Failed to delete student");
     },
   });
 };
@@ -59,8 +59,8 @@ export const useAddStudent = () => {
 
       dispatch(setStudents(updatedStudents));
     },
-    onError: (error) => {
-      console.error("Error creating student:", error);
+    onError: () => {
+      console.error("Error creating student");
     },
   });
 
@@ -77,8 +77,8 @@ export const useAddClass = () => {
 
       dispatch(setClasses(updatedClasses))
     },
-    onError: (error) => {
-      console.error("Error creating student:", error)
+    onError: () => {
+      console.error("Error creating student")
     }
   })
   return mutation

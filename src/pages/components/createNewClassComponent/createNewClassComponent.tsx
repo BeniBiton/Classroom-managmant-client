@@ -3,10 +3,12 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useAddClass } from "../../../hooks/useClassMutation";
+import { useStyles } from "./createNewClassComponent";
 
 
 const CreateClassForm = () => {
-  const {mutate: addNewClass, isLoading, error, isError} = useAddClass()
+  const {mutate: addNewClass, isLoading, error, isError, isSuccess} = useAddClass()
+  const classes = useStyles()
   
   const [formData, setFormData] = useState({
     id: "",
@@ -14,6 +16,9 @@ const CreateClassForm = () => {
     totalPlaces: 0,
   });
 
+  const isFormValid = () => {
+    return formData.id !== "" && formData.className !== "" && formData.totalPlaces > 0;
+  };
 
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -29,16 +34,19 @@ const CreateClassForm = () => {
     }));
   };
 
+  if (isSuccess) {
+    setFormData({
+      id: "",
+      className: "",
+      totalPlaces: 0,
+    });
+  }
+
   return (
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        "& > :not(style)": { m: 1, width: "300px" },
-      }}
+      className={classes.container}
       noValidate
       autoComplete="off"
     >
@@ -75,7 +83,7 @@ const CreateClassForm = () => {
         variant="contained"
         color="primary"
         sx={{ mt: 2, width: "300px" }}
-        disabled={isLoading}
+        disabled={isLoading || !isFormValid()}
       >
         {isLoading ? "Creating..." : "Create Class"}
       </Button>

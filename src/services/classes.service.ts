@@ -19,10 +19,10 @@ export const addClass = async (
 };
 
 export const unassignStudent = async (studentId: string) => {
-  const response = await api.patch(`/students/${studentId}/unassign`, { classId: null });
+  const response = await api.patch(`/students/unassign/${studentId}`, { classId: null });
   return response.data;
 };
 export const fetchStudentsForClass = async (classId: string): Promise<IStudent[]> => {
-  const response = await api.get(`/classes/${classId}/students`);
+  const response = await api.get(`/classes/students/${classId}`);
   return response.data;
 };

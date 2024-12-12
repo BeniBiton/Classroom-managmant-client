@@ -15,17 +15,20 @@ const classesSlice = createSlice({
   initialState: initialState,
   reducers: {
     setClasses: (state, action: PayloadAction<ClassItem[]>) => {
-      state.classesData = action.payload;
+      const classrooms = action.payload
+      state.classesData = classrooms;
     },
     deleteClass: (state, action: PayloadAction<string>) => {
+      const classId = action.payload
       state.classesData = state.classesData.filter(
-        (classItem: { id: string }) => classItem.id !== action.payload
+        (classItem: { id: string }) => classItem.id !== classId
       );
     },
-    removeStudentFromClass: (state, action: PayloadAction<string>) => {
+    removeStudentFromClass: (state, action: PayloadAction<string>) => {  
+      const  studentId  = action.payload    
       state.classesData = state.classesData.map((classItem) => {
         classItem.students = classItem.students.filter(
-          (studentItem) => studentItem.id !== action.payload
+          (studentItem) => studentItem.id !== studentId
         );
 
         return classItem;

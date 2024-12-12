@@ -13,12 +13,14 @@ const studentSlice = createSlice({
   initialState,
   reducers: {
     setStudents: (state, action: PayloadAction<IStudent[]>) => {
-      state.studentsData = action.payload;
+      const students = action.payload
+      state.studentsData = students;
     },
     deleteStudent: (state, action: PayloadAction<string>) => {
+      const studentId = action.payload
       state.studentsData = state.studentsData.filter(
-        (student) => student.id !== action.payload
-      );
+        (student) => student.id !== studentId
+      )
     },
     updateStudentClass: (
       state,
@@ -36,8 +38,9 @@ const studentSlice = createSlice({
     },
 
     removeStudentInClass: (state, action: PayloadAction<string>) => {
+      const studentId = action.payload
       state.studentsData = state.studentsData.map((studentItem) => {
-        if (studentItem.id === action.payload) {
+        if (studentItem.id === studentId) {
           return {
             ...studentItem,
             classId: null,

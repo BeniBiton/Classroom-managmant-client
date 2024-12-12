@@ -10,7 +10,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import ListItemText from "@mui/material/ListItemText";
 import { useStyles } from "./studentsInClassList.styles";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import { useThemeContext } from "../../../themes/ThemeContext";
+import { blueTheme, redTheme, useThemeContext } from "../../../themes/ThemeContext";
 import { useUnassignStudent } from "../../../hooks/useClassMutation";
 import { StudentsListInClassProps } from "../../../interfaces/class.interface";
 
@@ -22,6 +22,9 @@ const StudentsListInClass: React.FC<StudentsListInClassProps> = ({
 }) => {
   const { isBlueTheme } = useThemeContext();
   const classes = useStyles();
+
+  const currentTheme = isBlueTheme ? blueTheme : redTheme;
+  const iconColor = currentTheme.palette.primary.main;
 
   const { mutate: unassignStudent } = useUnassignStudent();
 
@@ -57,7 +60,7 @@ const StudentsListInClass: React.FC<StudentsListInClassProps> = ({
                 aria-label="delete"
                 onClick={() => handleUnassignStudent(student.id)}
                 sx={{
-                  color: isBlueTheme ? "blue" : "red",
+                  color: iconColor
                 }}
               >
                 <DeleteIcon className={classes.deleteIcon} />
